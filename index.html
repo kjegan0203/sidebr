@@ -1,131 +1,575 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<style type="text/css">
-body{
-padding-top:100px;
-padding-bottom:100px;
-background-color:gold;
-}
-#header{
-top:0;
-left:0;
-width:100%;
-border:2px solid gold;
-background-color:grey;
-position:fixed;
-}
-h2{
-text-align:center;
-color:white;
-}
-.home{
-list-style-type:none;
-margin:0;
-padding:0;
-width:150%;
-overflow:hidden;
-border:1px solid gold;
-background-color:yellow;
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BSB Manager - Linear Clean Design</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-}
-.home li{
-text-align:center;
-padding-left:15px;
-padding-right:15px;
-color:black;
-float:left;
-}
-.home li a
-{
-color:black;
-}
-#side{
-top:110px;
-width:40%;
-height:80%;
-float:left;
-background-color:gold;
-overflow:hidden;
-border:2px solid gold;
-position:fixed;
-border-right-color:black;
-}
-ul li{
-padding-top:10px;
-padding-bottom:10px;
-list-style-type:none;
-}
-a{
-text-decoration:none;
-color:white;
-}
-h3{
-text-align:center;
-}
+<style>
+    /* =========================================
+       1. VARIABLES & RESET
+       ========================================= */
+    :root {
+        --primary: #4f46e5;       /* Indigo 600 */
+        --primary-soft: #eef2ff;  /* Indigo 50 */
+        --bg-body: #f8fafc;       /* Slate 50 */
+        --bg-card: #ffffff;
+        --text-main: #0f172a;     /* Slate 900 */
+        --text-muted: #64748b;    /* Slate 500 */
+        --border: #e2e8f0;        /* Slate 200 */
+        --radius: 12px;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
 
-#content{
-width:57%;
-float:right;
-border-top-color:black;
-background-color:cyan;
-color:black;
-}
-#footer{
-bottom:0;
-left:0;
-background-color:Purple;
-color:cyan;
-position:fixed;
-width:100%;
-z-index:0;
-text-align:center;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg-body);
+        color: var(--text-main);
+        height: 100vh;
+        overflow: hidden; /* Prevent body scroll, use inner scroll */
+        display: flex;
+    }
+
+    /* Scrollbar Polish */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+
+    /* =========================================
+       2. LAYOUT: SIDEBAR (Desktop)
+       ========================================= */
+    .sidebar {
+        width: 260px;
+        background: white;
+        border-right: 1px solid var(--border);
+        display: flex; flex-direction: column;
+        padding: 1.5rem;
+        z-index: 50;
+        flex-shrink: 0;
+    }
+
+    .brand {
+        display: flex; align-items: center; gap: 10px;
+        font-size: 1.1rem; font-weight: 700; color: var(--text-main);
+        margin-bottom: 2.5rem;
+    }
+    .brand i { color: var(--primary); font-size: 1.3rem; }
+
+    .nav-menu { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    
+    .nav-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    .nav-item:hover { background: var(--bg-body); color: var(--text-main); }
+    .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+    .nav-item i { width: 20px; text-align: center; }
+
+    .user-profile {
+        margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border);
+        display: flex; align-items: center; gap: 10px;
+    }
+    .avatar-sm { 
+        width: 32px; height: 32px; background: var(--primary-soft); color: var(--primary); 
+        border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 0.8rem;
+    }
+    .u-info { flex: 1; line-height: 1.2; }
+    .u-name { font-size: 0.9rem; font-weight: 600; display: block; }
+    .u-role { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* =========================================
+       3. LAYOUT: MAIN CONTENT
+       ========================================= */
+    .main-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+        padding-bottom: 100px; /* Space for bottom nav on mobile */
+    }
+
+    .page { display: none; animation: fadeIn 0.3s ease-out; }
+    .page.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
+
+    /* Header */
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .page-title h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+    .page-title p { color: var(--text-muted); font-size: 0.9rem; }
+    
+    .btn-primary {
+        background: var(--text-main); color: white; border: none;
+        padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+        cursor: pointer; display: flex; align-items: center; gap: 8px;
+        transition: transform 0.1s;
+    }
+    .btn-primary:active { transform: scale(0.98); }
+
+    /* =========================================
+       4. COMPONENT: DASHBOARD GRID
+       ========================================= */
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    
+    .card {
+        background: white; border: 1px solid var(--border); border-radius: 12px;
+        padding: 1.5rem; box-shadow: var(--shadow-sm);
+    }
+
+    .metric { display: flex; align-items: center; gap: 1rem; }
+    .m-icon { 
+        width: 48px; height: 48px; border-radius: 10px; 
+        display: grid; place-items: center; font-size: 1.2rem; 
+    }
+    .blue-bg { background: #eff6ff; color: #3b82f6; }
+    .green-bg { background: #f0fdf4; color: #16a34a; }
+    .orange-bg { background: #fff7ed; color: #ea580c; }
+    
+    .m-data .val { font-size: 1.8rem; font-weight: 700; line-height: 1; color: var(--text-main); }
+    .m-data .lbl { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
+
+    .split-view { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+
+    /* Timeline */
+    .timeline-item { display: flex; gap: 1rem; padding-bottom: 1.5rem; }
+    .tl-time { width: 65px; text-align: right; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; padding-top: 2px; }
+    .tl-line { width: 2px; background: var(--border); position: relative; margin: 0 8px; }
+    .tl-line::after { 
+        content:''; position: absolute; top: 6px; left: -4px; 
+        width: 10px; height: 10px; background: white; 
+        border: 2px solid #94a3b8; border-radius: 50%; 
+    }
+    .tl-card { 
+        flex: 1; background: white; border: 1px solid var(--border); 
+        padding: 12px; border-radius: 8px; font-size: 0.9rem;
+    }
+    .tag { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; margin-left: 8px; }
+    .tag-done { background: #dcfce7; color: #166534; }
+    .tag-prog { background: #e0f2fe; color: #0369a1; }
+
+    /* =========================================
+       5. COMPONENT: TRACKER (Ticket UI)
+       ========================================= */
+    .tracker-layout { display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; align-items: start; }
+
+    /* User List */
+    .user-list { display: flex; flex-direction: column; gap: 4px; background: white; padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
+    .u-item { 
+        display: flex; align-items: center; gap: 10px; padding: 10px; 
+        border-radius: 8px; cursor: pointer; transition: background 0.2s;
+    }
+    .u-item:hover { background: var(--bg-body); }
+    .u-item.active { background: var(--primary-soft); }
+    .u-item.active .u-name { color: var(--primary); font-weight: 600; }
+
+    /* Ticket Card */
+    .ticket-card {
+        background: white; border-radius: 12px; border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 1rem;
+        position: relative;
+    }
+    .status-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #cbd5e1; }
+    .status-bar.done { background: #10b981; }
+    
+    .t-body { padding: 1.2rem 1.2rem 1.2rem 1.5rem; }
+    
+    /* Ghost Inputs */
+    .g-row { display: flex; gap: 1rem; margin-bottom: 0.8rem; }
+    .g-meta { display: flex; gap: 1rem; color: var(--text-muted); font-size: 0.85rem; align-items: center; }
+    .g-input-sm { border: none; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; width: 80px; }
+    
+    .hero-input { 
+        width: 100%; border: none; font-size: 1.1rem; font-weight: 600; 
+        color: var(--text-main); margin-bottom: 1rem; font-family: inherit;
+    }
+    .hero-input::placeholder { color: #cbd5e1; }
+
+    .t-footer { 
+        display: flex; align-items: center; gap: 1.5rem; 
+        border-top: 1px solid var(--bg-body); padding-top: 1rem; 
+    }
+    .tf-item { display: flex; flex-direction: column; }
+    .tf-lbl { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
+    .g-select { 
+        background: var(--bg-body); border: 1px solid var(--border); 
+        padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; color: var(--text-main);
+    }
+
+    /* Pending Chips */
+    .pending-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.5rem; }
+    .p-chip {
+        background: #fff7ed; border: 1px solid #ffedd5; color: #c2410c;
+        padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;
+        cursor: pointer; display: flex; align-items: center; gap: 6px;
+    }
+    .p-chip:hover { background: #ffedd5; }
+
+    /* =========================================
+       6. COMPONENT: PROJECTS GRID
+       ========================================= */
+    .proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .proj-card {
+        background: white; border: 1px solid var(--border); border-radius: 12px;
+        padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;
+        transition: transform 0.2s; cursor: pointer;
+    }
+    .proj-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+    
+    .pc-head { display: flex; justify-content: space-between; align-items: center; }
+    .pc-icon { width: 40px; height: 40px; background: var(--bg-body); border-radius: 8px; display: grid; place-items: center; color: var(--text-muted); }
+    .pc-badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; background: #dcfce7; color: #166534; font-weight: 600; }
+    
+    .pc-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+    .pc-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
+    
+    .progress-track { height: 6px; background: var(--bg-body); border-radius: 4px; overflow: hidden; margin-top: auto; }
+    .progress-fill { height: 100%; background: var(--primary); }
+
+    /* =========================================
+       7. COMPONENT: TEAM TABLE
+       ========================================= */
+    .table-container { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: var(--bg-body); padding: 12px 16px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--bg-body); font-size: 0.9rem; }
+    tr:last-child td { border-bottom: none; }
+    
+    .tag-role { background: #f1f5f9; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+
+    /* =========================================
+       8. MOBILE BOTTOM BAR
+       ========================================= */
+    .bottom-nav {
+        display: none; /* Hidden on Desktop */
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: white; border-top: 1px solid var(--border);
+        height: 60px; z-index: 100;
+        justify-content: space-around; align-items: center;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    .b-item { font-size: 1.4rem; color: #94a3b8; transition: color 0.2s; }
+    .b-item.active { color: var(--primary); }
+    .b-fab {
+        width: 48px; height: 48px; background: var(--text-main); color: white;
+        border-radius: 50%; display: grid; place-items: center; font-size: 1.2rem;
+        transform: translateY(-20px); box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* =========================================
+       9. MEDIA QUERIES
+       ========================================= */
+    @media (max-width: 900px) {
+        .sidebar { display: none; } /* Hide Sidebar */
+        .bottom-nav { display: flex; } /* Show Bottom Bar */
+        .main-content { padding: 1rem; padding-bottom: 80px; }
+        .split-view { grid-template-columns: 1fr; }
+        
+        .tracker-layout { display: flex; flex-direction: column; gap: 1rem; }
+        
+        /* Mobile User Scroll */
+        .user-list { 
+            flex-direction: row; overflow-x: auto; 
+            padding: 5px; background: transparent; border: none;
+        }
+        .u-item { 
+            flex-direction: column; min-width: 70px; padding: 5px; 
+            background: white; border: 1px solid var(--border); text-align: center;
+        }
+        .u-item span { font-size: 0.75rem; margin-top: 4px; }
+        
+        .t-footer { flex-wrap: wrap; gap: 1rem; }
+    }
 
 </style>
 </head>
 <body>
-<div id="header">
-<h2>MAHADHI INFOTECH</h2>
-<ul class="home">
-<li><a href="#" >Home</a></li>
-<li><a href="#" >trending</a></li>
-<li><a href="#" >subscription</a></li>
-<li><a href="#" >message</a></li>
-</ul>
-</div>
-<div id="side"> <h3>sidebar</h3>
-<ul>
-<li><a href="#" >mobiles</a></li>
-<li><a href="#" >electronics</a></li>
-<li><a href="#" >Books</a></li>
-<li><a href="#" >Tables</a></li>
-<li><a href="#" >Chairs</a></li>
-<li><a href="#" >Projects</a></li>
-<li><a href="#" >Certificate</a></li>
-<li><a href="#" >Cars</a></li>
-<li><a href="#" >lorry</a></li>
-<li><a href="#" >truck</a></li>
-<li><a href="#" >animals</a></li>
-<li><a href="#" >college</a></li>
-<li><a href="#" >schools</a></li>
-<li><a href="#" >tollgate</a></li>
-</ul>
-</div>
-<div id="content">
-<p>An essay is, generally, a piece of writing that gives the author's own argument — but the definition is vague, overlapping with those of a paper, an article, a pamphlet, and a short story. Essays have traditionally been sub-classified as formal and informal. Formal essays are characterized by "serious purpose, dignity, logical organization, length," whereas the informal essay is characterized by "the personal element (self-revelation, individual tastes and experiences, confidential manner), humor, graceful style, rambling structure, unconventionality or novelty of theme," etc.[1]
 
-Essays are commonly used as literary criticism, political manifestos, learned arguments, observations of daily life, recollections, and reflections of the author. Almost all modern essays are written in prose, but works in verse have been dubbed essays (e.g., Alexander Pope's An Essay on Criticism and An Essay on Man). While brevity usually defines an essay, voluminous works like John Locke's An Essay Concerning Human Understanding and Thomas Malthus's An Essay on the Principle of Population are counterexamples.
+    <aside class="sidebar">
+        <div class="brand"><i class="fa-solid fa-cube"></i> BSB Manager</div>
+        <nav class="nav-menu">
+            <div class="nav-item active" onclick="showPage('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Dashboard</div>
+            <div class="nav-item" onclick="showPage('tracker', this)"><i class="fa-solid fa-list-check"></i> Daily Scrum</div>
+            <div class="nav-item" onclick="showPage('projects', this)"><i class="fa-solid fa-folder"></i> Projects</div>
+            <div class="nav-item" onclick="showPage('team', this)"><i class="fa-solid fa-users"></i> Team</div>
+        </nav>
+        <div class="user-profile">
+            <div class="avatar-sm">AJ</div>
+            <div class="u-info">
+                <span class="u-name">Alex Johnson</span>
+                <span class="u-role">Admin</span>
+            </div>
+            <i class="fa-solid fa-arrow-right-from-bracket" style="color:#ef4444; cursor:pointer;"></i>
+        </div>
+    </aside>
 
-In some countries (e.g., the United States and Canada), essays have become a major part of formal education. Secondary students are taught structured essay formats to improve their writing skills; admission essays are often used by universities in selecting applicants, and in the humanities and social sciences essays are often used as a way of assessing the performance of students during final exams.
+    <main class="main-content">
+        
+        <div id="dashboard" class="page active">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Overview</h1>
+                    <p>Monday, Oct 24 • System Operational</p>
+                </div>
+                <button class="btn-primary"><i class="fa-solid fa-plus"></i> Quick Action</button>
+            </div>
 
-The concept of an "essay" has been extended to other media beyond writing. A film essay is a movie that often incorporates documentary filmmaking styles and focuses more on the evolution of a theme or idea. A photographic essay covers a topic with a linked series of photographs that may have accompanying text or captions.
+            <div class="grid-3">
+                <div class="card metric">
+                    <div class="m-icon blue-bg"><i class="fa-regular fa-clock"></i></div>
+                    <div class="m-data"><div class="val">142h</div><div class="lbl">Total Hours</div></div>
+                </div>
+                <div class="card metric">
+                    <div class="m-icon green-bg"><i class="fa-solid fa-check"></i></div>
+                    <div class="m-data"><div class="val">28</div><div class="lbl">Completed</div></div>
+                </div>
+                <div class="card metric">
+                    <div class="m-icon orange-bg"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="m-data"><div class="val">3</div><div class="lbl">Blocked</div></div>
+                </div>
+            </div>
 
-</p>
-</div>
-<div id="footer">
-<p>
-if any questions, contact:8056404521</p>
-</div>
-</body></html>
+            <div class="split-view">
+                <div class="card">
+                    <h3 style="margin-bottom:1.5rem; font-size:1.1rem;">Recent Activity</h3>
+                    <div class="timeline-item">
+                        <div class="tl-time">10:30 AM</div>
+                        <div class="tl-line"></div>
+                        <div class="tl-card">
+                            <div style="font-weight:700; margin-bottom:4px;">Sarah Williams <span class="tag tag-done">Done</span></div>
+                            <div style="color:#64748b;">Fixed the login API authentication bug.</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="tl-time">09:15 AM</div>
+                        <div class="tl-line"></div>
+                        <div class="tl-card">
+                            <div style="font-weight:700; margin-bottom:4px;">Mike Brown <span class="tag tag-prog">In Progress</span></div>
+                            <div style="color:#64748b;">Working on the new dashboard layout structure.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom:1.5rem; font-size:1.1rem;">Team Status</h3>
+                    <div style="display:flex; flex-direction:column; gap:15px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="avatar-sm" style="background:#dbeafe; color:#1e40af;">SW</div>
+                            <div><div style="font-weight:600; font-size:0.9rem;">Sarah W.</div><div style="font-size:0.75rem; color:#16a34a;">Online</div></div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="avatar-sm" style="background:#ffedd5; color:#9a3412;">MB</div>
+                            <div><div style="font-weight:600; font-size:0.9rem;">Mike B.</div><div style="font-size:0.75rem; color:#f59e0b;">Busy</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tracker" class="page">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Daily Scrum</h1>
+                    <p>Log work and track progress</p>
+                </div>
+                <button class="btn-primary"><i class="fa-solid fa-check"></i> Save Log</button>
+            </div>
+
+            <div class="tracker-layout">
+                <div class="user-list">
+                    <div class="u-item active">
+                        <div class="avatar-sm">AJ</div>
+                        <span class="u-name">Alex</span>
+                    </div>
+                    <div class="u-item">
+                        <div class="avatar-sm" style="background:#f1f5f9; color:#64748b;">SW</div>
+                        <span class="u-name">Sarah</span>
+                    </div>
+                    <div class="u-item">
+                        <div class="avatar-sm" style="background:#f1f5f9; color:#64748b;">MB</div>
+                        <span class="u-name">Mike</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="margin-bottom:1.5rem;">
+                        <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:#94a3b8; display:block; margin-bottom:10px;">Pending from Yesterday</span>
+                        <div class="pending-row">
+                            <div class="p-chip"><i class="fa-solid fa-arrow-down"></i> BSB-101 Auth Fix</div>
+                            <div class="p-chip"><i class="fa-solid fa-arrow-down"></i> BSB-104 API Docs</div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-card">
+                        <div class="status-bar done"></div>
+                        <div class="t-body">
+                            <div class="g-row">
+                                <div class="g-meta"><i class="fa-regular fa-folder"></i> <input value="BSB Manager" class="g-input-sm"></div>
+                                <div class="g-meta"><i class="fa-solid fa-hashtag"></i> <input value="BSB-123" class="g-input-sm"></div>
+                            </div>
+                            
+                            <input class="hero-input" value="Implemented the new sidebar navigation logic">
+
+                            <div class="t-footer">
+                                <div class="tf-item">
+                                    <span class="tf-lbl">Status</span>
+                                    <select class="g-select"><option>Completed</option><option>In Progress</option></select>
+                                </div>
+                                <div class="tf-item">
+                                    <span class="tf-lbl">Hours</span>
+                                    <input type="number" value="4" class="g-select" style="width:60px;">
+                                </div>
+                                <div class="tf-item" style="margin-left:auto;">
+                                    <span class="tf-lbl">Due Date</span>
+                                    <input type="date" class="g-select">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-card">
+                        <div class="status-bar" style="background:#e2e8f0;"></div>
+                        <div class="t-body">
+                            <input class="hero-input" placeholder="What are you working on next?">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="projects" class="page">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Projects</h1>
+                    <p>Active development initiatives</p>
+                </div>
+                <button class="btn-primary"><i class="fa-solid fa-plus"></i> New</button>
+            </div>
+
+            <div class="proj-grid">
+                <div class="proj-card">
+                    <div class="pc-head">
+                        <div class="pc-icon"><i class="fa-solid fa-cube"></i></div>
+                        <div class="pc-badge">Active</div>
+                    </div>
+                    <div>
+                        <div class="pc-title">BSB Manager</div>
+                        <div class="pc-desc">Internal scrum tracking and HR management dashboard tool.</div>
+                    </div>
+                    <div style="margin-top:auto;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:5px; font-weight:600; color:#64748b;">
+                            <span>Progress</span>
+                            <span>65%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width:65%"></div></div>
+                    </div>
+                </div>
+
+                <div class="proj-card">
+                    <div class="pc-head">
+                        <div class="pc-icon"><i class="fa-solid fa-wallet"></i></div>
+                        <div class="pc-badge" style="background:#eff6ff; color:#1d4ed8;">Planning</div>
+                    </div>
+                    <div>
+                        <div class="pc-title">Finance API</div>
+                        <div class="pc-desc">Migrating legacy SOAP services to REST API.</div>
+                    </div>
+                    <div style="margin-top:auto;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:5px; font-weight:600; color:#64748b;">
+                            <span>Progress</span>
+                            <span>10%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width:10%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="team" class="page">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Team Members</h1>
+                    <p>Manage access and roles</p>
+                </div>
+                <button class="btn-primary"><i class="fa-solid fa-user-plus"></i> Invite</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Projects</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <div class="avatar-sm">AJ</div> <strong>Alex Johnson</strong>
+                                </div>
+                            </td>
+                            <td><span class="tag-role">Admin</span></td>
+                            <td><span style="color:#16a34a; font-weight:600; font-size:0.8rem;">● Online</span></td>
+                            <td style="color:#64748b;">BSB Manager, Finance API</td>
+                            <td style="text-align:right; color:#94a3b8;"><i class="fa-solid fa-ellipsis"></i></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <div class="avatar-sm" style="background:#f1f5f9; color:#64748b;">SW</div> <strong>Sarah Williams</strong>
+                                </div>
+                            </td>
+                            <td><span class="tag-role">Developer</span></td>
+                            <td><span style="color:#f59e0b; font-weight:600; font-size:0.8rem;">● Busy</span></td>
+                            <td style="color:#64748b;">BSB Manager</td>
+                            <td style="text-align:right; color:#94a3b8;"><i class="fa-solid fa-ellipsis"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <nav class="bottom-nav">
+        <div class="b-item active" onclick="showPage('dashboard', this)"><i class="fa-solid fa-chart-pie"></i></div>
+        <div class="b-item" onclick="showPage('tracker', this)"><i class="fa-solid fa-list-check"></i></div>
+        <div class="b-fab" onclick="showPage('tracker', this)"><i class="fa-solid fa-plus"></i></div>
+        <div class="b-item" onclick="showPage('projects', this)"><i class="fa-solid fa-folder"></i></div>
+        <div class="b-item" onclick="showPage('team', this)"><i class="fa-solid fa-users"></i></div>
+    </nav>
+
+    <script>
+        function showPage(pageId, navEl) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Update Desktop Sidebar Active State
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(navEl.classList.contains('nav-item')) navEl.classList.add('active');
+
+            // Update Mobile Bottom Nav Active State
+            document.querySelectorAll('.b-item').forEach(el => el.classList.remove('active'));
+            if(navEl.classList.contains('b-item')) navEl.classList.add('active');
+        }
+    </script>
+</body>
+</html>
