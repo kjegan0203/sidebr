@@ -3,24 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BSB Manager - Final Mobile Fix</title>
+<title>BSB Manager - Ultimate System</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
     /* =========================================
-       1. VARIABLES & RESET
+       1. CORE STYLES
        ========================================= */
     :root {
-        --primary: #4f46e5;       /* Indigo 600 */
-        --primary-soft: #eef2ff;  /* Indigo 50 */
-        --bg-body: #f8fafc;       /* Slate 50 */
+        --primary: #4f46e5;
+        --primary-soft: #eef2ff;
+        --bg-body: #f8fafc;
         --bg-card: #ffffff;
-        --text-main: #0f172a;     /* Slate 900 */
-        --text-muted: #64748b;    /* Slate 500 */
-        --border: #e2e8f0;        /* Slate 200 */
-        --radius: 12px;
-        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -34,192 +33,153 @@
         display: flex;
     }
 
-    /* =========================================
-       2. DESKTOP SIDEBAR
-       ========================================= */
-    .sidebar {
-        width: 260px;
-        background: white;
-        border-right: 1px solid var(--border);
-        display: flex; flex-direction: column;
-        padding: 1.5rem;
-        z-index: 50;
-        flex-shrink: 0;
-    }
-
-    .brand {
-        display: flex; align-items: center; gap: 10px;
-        font-size: 1.1rem; font-weight: 700; color: var(--text-main);
-        margin-bottom: 2rem;
-    }
-    .brand i { color: var(--primary); font-size: 1.3rem; }
-
-    .nav-menu { display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     
-    .nav-label {
-        font-size: 0.75rem; text-transform: uppercase; font-weight: 700; 
-        color: var(--text-muted); margin: 1.5rem 0 0.5rem 10px; letter-spacing: 0.5px;
-    }
+    /* Utilities */
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
+    .hidden { display: none !important; }
 
-    .nav-item {
-        display: flex; align-items: center; gap: 12px;
-        padding: 10px 14px;
-        border-radius: 8px;
-        color: var(--text-muted);
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        cursor: pointer;
-    }
+    /* Tags */
+    .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+    .tag-done { background: #dcfce7; color: #166534; }
+    .tag-prog { background: #e0f2fe; color: #0369a1; }
+    .tag-blocked { background: #fee2e2; color: #991b1b; }
+    .tag-role { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .proj-badge { background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-right: 4px; display: inline-block; margin-bottom: 2px; }
+
+    /* =========================================
+       2. SIDEBAR
+       ========================================= */
+    .sidebar { width: 260px; background: white; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem; z-index: 50; flex-shrink: 0; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: 800; margin-bottom: 2rem; }
+    .brand i { color: var(--primary); }
+    
+    .nav-menu { flex: 1; overflow-y: auto; }
+    .nav-label { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin: 1.5rem 0 0.5rem 10px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.9rem; cursor: pointer; margin-bottom: 2px; transition: all 0.2s; }
     .nav-item:hover { background: var(--bg-body); color: var(--text-main); }
     .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
-    .nav-item i { width: 20px; text-align: center; font-size: 1rem; }
-
-    .user-profile {
-        margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border);
-        display: flex; align-items: center; gap: 10px; cursor: pointer;
-    }
-    .avatar-sm { 
-        width: 32px; height: 32px; background: var(--primary-soft); color: var(--primary); 
-        border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 0.8rem;
-    }
-    .u-info { flex: 1; line-height: 1.2; }
-    .u-name { font-size: 0.9rem; font-weight: 600; display: block; }
-    .u-role { font-size: 0.75rem; color: var(--text-muted); }
+    .nav-item i { width: 20px; text-align: center; }
 
     /* =========================================
-       3. MAIN CONTENT AREA
+       3. MAIN CONTENT
        ========================================= */
-    .main-content {
-        flex: 1;
-        overflow-y: auto;
-        padding: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-        width: 100%;
-        padding-bottom: 120px; /* EXTRA SPACE FOR MOBILE BAR */
-    }
-
-    .page { display: none; animation: fadeIn 0.3s ease-out; }
+    .main-content { flex: 1; overflow-y: auto; padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; padding-bottom: 120px; }
+    .page { display: none; }
     .page.active { display: block; }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
-
-    /* Headers */
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .page-title h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
-    .page-title p { color: var(--text-muted); font-size: 0.9rem; }
+    .page-title h1 { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
+    .page-title p { color: #64748b; font-size: 0.95rem; margin-top: 4px; }
     
-    .btn-primary {
-        background: var(--text-main); color: white; border: none;
-        padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 0.9rem;
-        cursor: pointer; display: flex; align-items: center; gap: 8px;
-    }
+    .btn-primary { background: var(--text-main); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: transform 0.1s; }
+    .btn-primary:active { transform: scale(0.98); }
 
-    /* Cards & Grids */
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow-sm); }
-
-    /* Metrics */
-    .metric { display: flex; align-items: center; gap: 1rem; }
-    .m-icon { width: 48px; height: 48px; border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; }
-    .blue-bg { background: #eff6ff; color: #3b82f6; }
-    .green-bg { background: #f0fdf4; color: #16a34a; }
-    .m-data .val { font-size: 1.8rem; font-weight: 700; line-height: 1; color: var(--text-main); }
-    .m-data .lbl { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
+    /* Cards */
+    .card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow); }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-lbl { font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; }
+    .stat-val { font-size: 2rem; font-weight: 800; color: #0f172a; margin: 5px 0; }
+    .stat-sub { font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 5px; }
 
     /* =========================================
-       4. TASKS & TICKET UI
+       4. SCRUM & TEAM
        ========================================= */
-    .date-nav {
-        display: flex; align-items: center; justify-content: center; gap: 1rem;
-        background: white; border: 1px solid var(--border);
-        padding: 8px 16px; border-radius: 12px; margin-bottom: 1.5rem;
-        width: fit-content;
+    .team-strip { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 10px; margin-bottom: 1.5rem; }
+    .tm-card { min-width: 140px; background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
+    .tm-card:hover { transform: translateY(-3px); }
+    .tm-card.selected { border-color: var(--primary); background: var(--primary-soft); }
+    .tm-card.selected::after { content: '●'; color: var(--primary); position: absolute; top: 5px; right: 10px; font-size: 0.8rem; }
+    .tm-av { width: 48px; height: 48px; background: #cbd5e1; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center; font-weight: 700; color: white; }
+
+    /* =========================================
+       5. TASKS UI (Lock Logic)
+       ========================================= */
+    .date-nav { 
+        display: flex; align-items: center; justify-content: center; gap: 1.5rem; 
+        background: white; border: 1px solid var(--border); width: fit-content; 
+        padding: 8px 20px; border-radius: 50px; margin: 0 auto 2rem;
     }
-    .ticket-card {
-        background: white; border-radius: 12px; border: 1px solid var(--border);
-        box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 1rem;
-        position: relative;
+    .dn-btn { background: none; border: none; font-size: 1.2rem; color: #64748b; cursor: pointer; }
+    .dn-val { font-weight: 700; color: #0f172a; min-width: 160px; text-align: center; }
+
+    .ticket-card { 
+        background: white; border: 1px solid var(--border); border-radius: 12px; 
+        padding: 1.2rem; margin-bottom: 1rem; position: relative; overflow: hidden; 
+        transition: opacity 0.3s;
     }
-    .status-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #cbd5e1; }
-    .status-bar.done { background: #10b981; }
-    .t-body { padding: 1.2rem 1.2rem 1.2rem 1.5rem; }
-    .g-row { display: flex; gap: 1rem; margin-bottom: 0.8rem; }
+    .ticket-card.locked { background: #f1f5f9; border-style: dashed; }
+    .ticket-card.locked input, .ticket-card.locked select { pointer-events: none; color: #64748b; }
+    
+    .status-stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #cbd5e1; }
+    .status-stripe.done { background: #16a34a; }
+    .status-stripe.prog { background: #3b82f6; }
+    .status-stripe.block { background: #ef4444; }
+
+    .g-row { display: flex; gap: 1rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
     .g-meta { display: flex; gap: 0.5rem; color: var(--text-muted); font-size: 0.85rem; align-items: center; background: #f8fafc; padding: 4px 8px; border-radius: 6px; }
-    .g-input-sm { border: none; background: transparent; color: var(--text-main); font-weight: 600; font-size: 0.85rem; width: 80px; }
-    .hero-input { width: 100%; border: none; font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 1rem; font-family: inherit; }
-    .t-footer { display: flex; align-items: center; gap: 1.5rem; border-top: 1px solid var(--bg-body); padding-top: 1rem; }
+    .g-input-sm { border: none; background: transparent; color: var(--text-main); font-weight: 600; font-size: 0.85rem; width: 100px; }
+    
+    .hero-input { width: 100%; border: none; font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 1rem; background: transparent; }
+    .t-footer { display: flex; align-items: center; gap: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; flex-wrap: wrap; }
     .tf-item { display: flex; flex-direction: column; }
     .tf-lbl { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
-    .g-select { background: var(--bg-body); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; color: var(--text-main); }
+    .g-select { background: #f8fafc; border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; color: var(--text-main); }
 
     /* =========================================
-       5. WEEKLY TABLE
+       6. WEEKLY & REPORTS
        ========================================= */
     .weekly-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
-    .weekly-table th { background: var(--bg-body); padding: 12px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+    .weekly-table th { background: #f8fafc; padding: 12px; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
     .weekly-table td { border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); padding: 0; }
     .weekly-table input { width: 100%; height: 44px; border: none; text-align: center; font-size: 0.9rem; color: var(--text-main); }
+    
+    .filter-bar { background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; align-items: end; }
+    .f-group { display: flex; flex-direction: column; gap: 5px; }
+    .rep-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .rep-table th { background: #f8fafc; padding: 12px; text-align: left; font-size: 0.8rem; font-weight: 700; color: #64748b; border-bottom: 1px solid var(--border); }
+    .rep-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
 
     /* =========================================
-       6. MOBILE BOTTOM BAR (FIXED)
+       7. PROJECTS GRID
+       ========================================= */
+    .proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .proj-card { 
+        background: white; border: 1px solid var(--border); border-radius: 12px; 
+        padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; 
+        transition: transform 0.2s; cursor: pointer;
+    }
+    .proj-card:hover { transform: translateY(-4px); border-color: var(--primary); }
+    .pc-head { display: flex; justify-content: space-between; align-items: center; }
+    .pc-icon { width: 44px; height: 44px; background: var(--bg-body); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; color: #64748b; }
+    .pc-title { font-size: 1.1rem; font-weight: 700; }
+    .pc-desc { font-size: 0.9rem; color: #64748b; line-height: 1.4; }
+    .progress-track { height: 6px; background: #f1f5f9; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+    .progress-fill { height: 100%; background: var(--primary); }
+    .av-stack { display: flex; }
+    .av-stack .av { width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; margin-left: -8px; display: grid; place-items: center; font-size: 0.7rem; font-weight: 700; color: white; }
+    .av-stack .av:first-child { margin-left: 0; }
+
+    /* =========================================
+       8. MOBILE NAV
        ========================================= */
     .bottom-nav {
-        display: none; /* Hidden on Desktop */
-        position: fixed; 
-        bottom: 0; left: 0; right: 0;
-        background: #ffffff; 
-        border-top: 1px solid var(--border);
-        height: 70px; 
-        z-index: 9999; /* Forces it to top */
-        justify-content: space-around; 
-        align-items: center;
-        padding-bottom: env(safe-area-inset-bottom); /* iPhone X safe area */
-        box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+        display: none; position: fixed; bottom: 0; left: 0; right: 0; background: white;
+        height: 65px; border-top: 1px solid var(--border); z-index: 9999;
+        justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);
     }
-    
-    /* Menu Item */
-    .b-item { 
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        color: #94a3b8; font-size: 1.4rem; cursor: pointer; transition: color 0.2s;
-        flex: 1; height: 100%;
-    }
-    .b-item.active { color: var(--primary); }
-    
-    /* The FAB (+ Button) */
-    .b-fab-container {
-        position: relative;
-        top: -25px; /* Floats above the bar */
-        width: 60px; height: 60px;
-        background: var(--text-main);
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.4);
-        cursor: pointer;
-        z-index: 10000;
-        transition: transform 0.1s;
-    }
-    .b-fab-container:active { transform: scale(0.95) translateY(-25px); }
-    .b-fab-container i { color: white; font-size: 1.5rem; }
+    .bn-item { font-size: 1.4rem; color: #94a3b8; cursor: pointer; }
+    .bn-item.active { color: var(--primary); }
 
-    /* =========================================
-       7. MEDIA QUERIES
-       ========================================= */
     @media (max-width: 900px) {
-        .sidebar { display: none; } /* Hide Desktop Sidebar */
-        .bottom-nav { display: flex; } /* Show Mobile Bar */
-        .main-content { padding: 1rem; padding-bottom: 100px; } /* Adjust padding */
-        
-        .grid-3 { grid-template-columns: 1fr; }
-        .g-row { flex-wrap: wrap; }
-        
-        /* Fix Table scrolling on mobile */
-        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .weekly-table { min-width: 600px; }
+        .sidebar { display: none; }
+        .bottom-nav { display: flex; }
+        .main-content { padding: 1rem; padding-bottom: 100px; }
+        .weekly-table { min-width: 600px; } /* Force scroll */
     }
-
 </style>
 </head>
 <body>
@@ -227,160 +187,245 @@
     <aside class="sidebar">
         <div class="brand"><i class="fa-solid fa-cube"></i> BSB Manager</div>
         <nav class="nav-menu">
-            <div class="nav-item active" onclick="showPage('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Overview</div>
-            <div class="nav-item" onclick="showPage('scrum', this)"><i class="fa-solid fa-people-group"></i> Daily Scrum</div>
-            <div class="nav-item" onclick="showPage('tasks', this)"><i class="fa-solid fa-list-check"></i> Tasks</div>
-            <div class="nav-item" onclick="showPage('weekly', this)"><i class="fa-solid fa-calendar-week"></i> Weekly Details</div>
-            
-            <div class="nav-label">Other</div>
-            <div class="nav-item" onclick="showPage('projects', this)"><i class="fa-solid fa-folder"></i> Projects</div>
-            <div class="nav-item" onclick="showPage('team', this)"><i class="fa-solid fa-users"></i> Team</div>
+            <div class="nav-item active" onclick="nav('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Overview</div>
+            <div class="nav-item" onclick="nav('scrum', this)"><i class="fa-solid fa-users-viewfinder"></i> Daily Scrum</div>
+            <div class="nav-item" onclick="nav('tasks', this)"><i class="fa-solid fa-list-check"></i> Tasks</div>
+            <div class="nav-item" onclick="nav('weekly', this)"><i class="fa-solid fa-calendar-week"></i> Weekly Plan</div>
+            <div class="nav-label">Management</div>
+            <div class="nav-item" onclick="nav('projects', this)"><i class="fa-solid fa-folder"></i> Projects</div>
+            <div class="nav-item" onclick="nav('team', this)"><i class="fa-solid fa-users"></i> Team & Access</div>
+            <div class="nav-item" onclick="nav('reports', this)"><i class="fa-solid fa-file-invoice"></i> Reports</div>
         </nav>
-        
-        <div class="user-profile" onclick="showPage('profile', this)">
-            <div class="avatar-sm">AJ</div>
-            <div class="u-info">
-                <span class="u-name">Alex Johnson</span>
-                <span class="u-role">Developer</span>
-            </div>
-        </div>
     </aside>
 
     <main class="main-content">
-        
+
         <div id="dashboard" class="page active">
             <div class="page-header">
-                <div class="page-title"><h1>Overview</h1><p>Welcome back, Alex.</p></div>
+                <div class="page-title"><h1>Dashboard</h1><p>Welcome back, Alex.</p></div>
+                <div class="tag" style="background:#f1f5f9; color:#64748b;" id="dash-date">Mon, Oct 24</div>
             </div>
-            <div class="grid-3">
-                <div class="card metric">
-                    <div class="m-icon blue-bg"><i class="fa-regular fa-clock"></i></div>
-                    <div class="m-data"><div class="val">38h</div><div class="lbl">This Week</div></div>
+
+            <div class="grid-4">
+                <div class="card">
+                    <div class="stat-lbl">Tasks Today</div>
+                    <div class="stat-val">8</div>
+                    <div class="stat-sub"><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> 3 In Progress</div>
                 </div>
-                <div class="card metric">
-                    <div class="m-icon green-bg"><i class="fa-solid fa-check"></i></div>
-                    <div class="m-data"><div class="val">12</div><div class="lbl">Tasks Done</div></div>
+                <div class="card">
+                    <div class="stat-lbl">Blockers</div>
+                    <div class="stat-val" style="color:#ef4444">2</div>
+                    <div class="stat-sub">Needs Attention</div>
+                </div>
+                <div class="card">
+                    <div class="stat-lbl">Last Week</div>
+                    <div class="stat-val">42</div>
+                    <div class="stat-sub">Completed</div>
+                </div>
+                <div class="card">
+                    <div class="stat-lbl">Month Total</div>
+                    <div class="stat-val">156</div>
+                    <div class="stat-sub" style="color:#16a34a">↑ 12% vs Sep</div>
                 </div>
             </div>
+
             <div class="card">
-                <h3 style="margin-bottom:1rem;">Recent Timeline</h3>
-                <div class="timeline-item">
-                    <div class="tl-time">10:30 AM</div>
-                    <div class="tl-line"></div>
-                    <div class="tl-card"><strong>BSB-101</strong> - Fixed login styling.</div>
+                <h3 style="margin-bottom:1rem;">Recent Activity</h3>
+                <div style="display:flex; flex-direction:column; gap:15px;">
+                    <div style="display:flex; gap:15px; border-bottom:1px solid #f8fafc; padding-bottom:10px;">
+                        <div style="font-size:0.8rem; color:#94a3b8; min-width:60px;">10:30 AM</div>
+                        <div><div style="font-weight:600; font-size:0.9rem;">Sarah Williams completed "Login API"</div><div style="font-size:0.85rem; color:#64748b;">Project: BSB Manager</div></div>
+                    </div>
+                    <div style="display:flex; gap:15px; border-bottom:1px solid #f8fafc; padding-bottom:10px;">
+                        <div style="font-size:0.8rem; color:#94a3b8; min-width:60px;">09:15 AM</div>
+                        <div><div style="font-weight:600; font-size:0.9rem;">Mike Brown flagged a Blocker</div><div style="font-size:0.85rem; color:#ef4444;">Project: Finance API</div></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="scrum" class="page">
-            <div class="page-header"><div class="page-title"><h1>Daily Scrum</h1></div></div>
-            <div class="grid-3">
-                <div class="card">
-                    <div style="display:flex; gap:10px; margin-bottom:1rem;">
-                        <div class="avatar-sm" style="background:#f1f5f9; color:#64748b;">SW</div> <strong>Sarah Williams</strong>
-                    </div>
-                    <p><strong>Yesterday:</strong> UI mockups.</p>
+            <div class="page-header"><div class="page-title"><h1>Daily Scrum</h1><p>Check team status.</p></div></div>
+            <div class="team-strip">
+                <div class="tm-card selected" onclick="selMember(0, this)"><div class="tm-av" style="background:#4f46e5">AJ</div>Alex</div>
+                <div class="tm-card" onclick="selMember(1, this)"><div class="tm-av" style="background:#ec4899">SW</div>Sarah</div>
+                <div class="tm-card" onclick="selMember(2, this)"><div class="tm-av" style="background:#f59e0b">MB</div>Mike</div>
+                <div class="tm-card" onclick="selMember(3, this)"><div class="tm-av" style="background:#8b5cf6">JL</div>Jen</div>
+                <div class="tm-card" onclick="selMember(4, this)"><div class="tm-av" style="background:#64748b">DP</div>David</div>
+            </div>
+            <div class="card" id="scrum-detail">
+                <h3>Alex's Updates</h3>
+                <p style="margin:10px 0;"><strong>Yesterday:</strong> Completed API endpoints.</p>
+                <p><strong>Today:</strong> Working on the new UI components.</p>
+                <div style="margin-top:15px; padding-top:15px; border-top:1px solid #f1f5f9;">
+                    <button class="btn-primary" style="font-size:0.8rem;" onclick="nav('tasks', null)">+ Add Tasks</button>
                 </div>
             </div>
         </div>
 
         <div id="tasks" class="page">
             <div class="date-nav">
-                <button class="nav-arrow"><i class="fa-solid fa-chevron-left"></i></button>
-                <span class="current-date">Mon, Oct 24</span>
-                <button class="nav-arrow"><i class="fa-solid fa-chevron-right"></i></button>
+                <button class="dn-btn" onclick="changeDate(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                <span class="dn-val" id="task-date-display">Today</span>
+                <button class="dn-btn" onclick="changeDate(1)"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
-            
-            <div class="ticket-card">
-                <div class="status-bar done"></div>
-                <div class="t-body">
-                    <div class="g-row">
-                        <div class="g-meta"><i class="fa-regular fa-folder"></i> <input value="BSB Manager" class="g-input-sm"></div>
-                        <div class="g-meta"><i class="fa-solid fa-hashtag"></i> <input value="BSB-123" class="g-input-sm"></div>
-                    </div>
-                    <input class="hero-input" value="Refactor sidebar navigation logic">
-                    <div class="t-footer">
-                        <div class="tf-item">
-                            <span class="tf-lbl">Status</span>
-                            <select class="g-select"><option>In Progress</option></select>
-                        </div>
-                        <div class="tf-item"><span class="tf-lbl">Hours</span><input type="number" value="4" class="g-select" style="width:60px;"></div>
-                    </div>
+
+            <div id="task-container">
                 </div>
-            </div>
+
+            <button id="add-task-btn" class="btn-primary" style="width:100%; justify-content:center; margin-top:1rem;" onclick="addTaskRow()">
+                <i class="fa-solid fa-plus"></i> Add New Task
+            </button>
         </div>
 
         <div id="weekly" class="page">
-            <div class="page-header"><div class="page-title"><h1>Weekly Sheet</h1></div></div>
-            <div class="table-wrapper">
+            <div class="page-header">
+                <div class="page-title"><h1>Weekly Plan</h1><p>Week 43</p></div>
+                <div class="date-nav" style="margin:0;"><button class="dn-btn"><i class="fa-solid fa-chevron-left"></i></button><span class="dn-val" style="font-size:0.9rem;">Week 43</span><button class="dn-btn"><i class="fa-solid fa-chevron-right"></i></button></div>
+            </div>
+            <div style="overflow-x:auto;">
                 <table class="weekly-table">
-                    <thead><tr><th style="width:30%;">Task</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
+                    <thead><tr><th style="min-width:200px;">Task</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
                     <tbody>
                         <tr><td><input value="BSB-101 Auth Dev"></td><td><input type="number" value="4"></td><td><input type="number" value="4"></td><td><input></td><td><input></td><td><input></td></tr>
+                        <tr><td><input value="Meetings"></td><td><input type="number" value="1"></td><td><input type="number" value="1"></td><td><input></td><td><input></td><td><input></td></tr>
+                        <tr><td><input placeholder="+ Add Item..."></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div id="projects" class="page"><div class="page-header"><h1>Projects</h1></div></div>
-        <div id="team" class="page"><div class="page-header"><h1>Team</h1></div></div>
-        <div id="profile" class="page"><div class="page-header"><h1>Profile</h1></div><button class="btn-primary" style="background:#ef4444; width:100%;">Sign Out</button></div>
+        <div id="reports" class="page">
+            <div class="page-header"><div class="page-title"><h1>Reports</h1></div></div>
+            <div class="filter-bar">
+                <div class="f-group"><label class="stat-lbl">User</label><select class="g-select" id="rep-user"><option>All Users</option><option>Alex Johnson</option><option>Sarah Williams</option></select></div>
+                <div class="f-group"><label class="stat-lbl">Status</label><select class="g-select"><option>All</option><option>Done</option></select></div>
+                <button class="btn-primary" onclick="genReport()">Generate</button>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="rep-table hidden" id="rep-table">
+                    <thead><tr><th>Date</th><th>User</th><th>Task</th><th>Status</th><th>Remarks</th></tr></thead>
+                    <tbody id="rep-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="projects" class="page">
+            <div class="page-header"><div class="page-title"><h1>Projects</h1></div><button class="btn-primary"><i class="fa-solid fa-plus"></i> New</button></div>
+            <div class="proj-grid">
+                <div class="proj-card">
+                    <div class="pc-head"><div class="pc-icon"><i class="fa-solid fa-cube"></i></div><div class="tag tag-active">Active</div></div>
+                    <div><div class="pc-title">BSB Manager</div><div class="pc-desc">Internal scrum tool.</div></div>
+                    <div class="av-stack"><div class="av" style="background:#3b82f6;">AJ</div><div class="av" style="background:#ec4899;">SW</div></div>
+                    <div><div class="pc-meta"><span>Progress</span><span>65%</span></div><div class="progress-track"><div class="progress-fill" style="width:65%"></div></div></div>
+                </div>
+                <div class="proj-card">
+                    <div class="pc-head"><div class="pc-icon"><i class="fa-solid fa-wallet"></i></div><div class="tag tag-plan">Planning</div></div>
+                    <div><div class="pc-title">Finance API</div><div class="pc-desc">Migrating legacy SOAP services.</div></div>
+                    <div class="av-stack"><div class="av" style="background:#10b981;">CW</div></div>
+                    <div><div class="pc-meta"><span>Progress</span><span>10%</span></div><div class="progress-track"><div class="progress-fill" style="width:10%"></div></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="team" class="page">
+            <div class="page-header"><div class="page-title"><h1>Team Access</h1></div><button class="btn-primary">Add</button></div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead><tr><th>User</th><th>Role</th><th>Projects</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td><div class="user-cell"><div class="av-lg" style="background:#dbeafe; color:#1e40af">AJ</div><div><div style="font-weight:600;">Alex Johnson</div></div></div></td><td><span class="tag tag-role">Dev</span></td><td><span class="proj-badge">BSB Manager</span></td><td><span style="color:#16a34a; font-weight:700;">● Online</span></td></tr>
+                        <tr><td><div class="user-cell"><div class="av-lg" style="background:#fce7f3; color:#be185d">SW</div><div><div style="font-weight:600;">Sarah Williams</div></div></div></td><td><span class="tag tag-role">QA</span></td><td><span class="proj-badge">BSB Manager</span></td><td><span style="color:#f59e0b; font-weight:700;">● Busy</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
     </main>
 
     <nav class="bottom-nav">
-        <div class="b-item active" id="mob-dashboard" onclick="showPage('dashboard', this)">
-            <i class="fa-solid fa-chart-pie"></i>
-        </div>
-        
-        <div class="b-item" id="mob-scrum" onclick="showPage('scrum', this)">
-            <i class="fa-solid fa-people-group"></i>
-        </div>
-
-        <div class="b-fab-container" onclick="showPage('tasks', this)">
-            <i class="fa-solid fa-plus"></i>
-        </div>
-
-        <div class="b-item" id="mob-weekly" onclick="showPage('weekly', this)">
-            <i class="fa-solid fa-calendar-week"></i>
-        </div>
-
-        <div class="b-item" id="mob-profile" onclick="showPage('profile', this)">
-            <i class="fa-solid fa-user"></i>
-        </div>
+        <div class="bn-item active" onclick="nav('dashboard', this)"><i class="fa-solid fa-chart-pie"></i></div>
+        <div class="bn-item" onclick="nav('scrum', this)"><i class="fa-solid fa-users-viewfinder"></i></div>
+        <div class="bn-item" style="font-size:2rem; color:var(--primary);" onclick="nav('tasks', this)"><i class="fa-solid fa-circle-plus"></i></div>
+        <div class="bn-item" onclick="nav('projects', this)"><i class="fa-solid fa-folder"></i></div>
+        <div class="bn-item" onclick="nav('team', this)"><i class="fa-solid fa-users"></i></div>
     </nav>
 
     <script>
-        function showPage(pageId, navEl) {
-            // 1. Hide all pages
-            document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-            
-            // 2. Show selected page
-            document.getElementById(pageId).classList.add('active');
-
-            // 3. Update DESKTOP Sidebar
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            // Try to find matching desktop nav item based on pageId logic if needed, 
-            // or if navEl was passed from desktop sidebar, use it.
-            if(navEl && navEl.classList.contains('nav-item')) {
-                navEl.classList.add('active');
-            }
-
-            // 4. Update MOBILE Bottom Nav
-            document.querySelectorAll('.b-item').forEach(el => el.classList.remove('active'));
-            
-            // Map page IDs to mobile element IDs for highlighting
-            let mobId = '';
-            if(pageId === 'dashboard') mobId = 'mob-dashboard';
-            if(pageId === 'scrum') mobId = 'mob-scrum';
-            if(pageId === 'weekly') mobId = 'mob-weekly';
-            if(pageId === 'profile') mobId = 'mob-profile';
-            // Note: 'tasks' is the FAB, typically no highlight needed or handle separately
-            
-            if(mobId) {
-                document.getElementById(mobId).classList.add('active');
+        // --- NAV ---
+        function nav(id, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(el) {
+                document.querySelectorAll('.nav-item, .bn-item').forEach(n => n.classList.remove('active'));
+                if(el.classList.contains('nav-item') || el.classList.contains('bn-item')) el.classList.add('active');
             }
         }
+
+        // --- SCRUM ---
+        function selMember(idx, el) {
+            document.querySelectorAll('.tm-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            const data = [
+                {n:'Alex', y:'API Endpoints', t:'UI Components'},
+                {n:'Sarah', y:'Test Cases', t:'Regression Testing'},
+                {n:'Mike', y:'Client Call', t:'DB Schema'},
+                {n:'Jen', y:'UX Mockups', t:'Asset Export'},
+                {n:'David', y:'Server Config', t:'CI/CD Pipeline'}
+            ];
+            document.getElementById('scrum-detail').innerHTML = `<h3>${data[idx].n}'s Updates</h3><p style="margin:10px 0;"><strong>Yesterday:</strong> ${data[idx].y}</p><p><strong>Today:</strong> ${data[idx].t}</p><div style="margin-top:15px; padding-top:15px; border-top:1px solid #f1f5f9;"><button class="btn-primary" style="font-size:0.8rem;" onclick="nav('tasks', null)">+ Add Tasks</button></div>`;
+        }
+
+        // --- TASKS (7-DAY LOGIC) ---
+        let viewDate = new Date();
+        const today = new Date();
+
+        function formatDate(d) { return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
+        
+        function changeDate(days) {
+            viewDate.setDate(viewDate.getDate() + days);
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const diff = Math.ceil(Math.abs(today - viewDate) / (1000 * 60 * 60 * 24));
+            const isLocked = (today > viewDate) && (diff > 7);
+            
+            document.getElementById('task-date-display').innerText = (viewDate.toDateString() === today.toDateString()) ? "Today" : formatDate(viewDate);
+            
+            const btn = document.getElementById('add-task-btn');
+            if(isLocked) btn.classList.add('hidden'); else btn.classList.remove('hidden');
+
+            // Mock render
+            const container = document.getElementById('task-container');
+            if(isLocked) {
+                container.innerHTML = `<div class="ticket-card locked"><div class="status-stripe"></div><div style="padding:1.5rem; text-align:center; color:#94a3b8;"><i class="fa-solid fa-lock" style="font-size:1.5rem; margin-bottom:10px;"></i><br>Locked (Older than 7 days)</div></div>
+                <div class="ticket-card locked"><div class="status-stripe done"></div><div style="padding:1.5rem;"><div class="hero-input" style="color:#64748b;">Legacy Task #101</div><div class="t-footer"><div class="tag tag-done">Done</div></div></div></div>`;
+            } else {
+                container.innerHTML = `
+                <div class="ticket-card"><div class="status-stripe done"></div><div class="t-body"><div class="g-row"><div class="g-meta"><i class="fa-regular fa-folder"></i> <input value="BSB Manager" class="g-input-sm"></div><div class="g-meta"><i class="fa-solid fa-hashtag"></i> <input value="BSB-123" class="g-input-sm"></div></div><input class="hero-input" value="Refactor sidebar navigation logic"><div class="t-footer"><div class="tf-item"><span class="tf-lbl">Status</span><select class="g-select"><option>Completed</option></select></div><div class="tf-item"><span class="tf-lbl">Hours</span><input type="number" value="4" class="g-select" style="width:60px;"></div></div></div></div>
+                <div class="ticket-card"><div class="status-stripe prog"></div><div class="t-body"><div class="g-row"><div class="g-meta"><i class="fa-regular fa-folder"></i> <input value="Finance API" class="g-input-sm"></div></div><input class="hero-input" value="Update DB Schema"><div class="t-footer"><div class="tf-item"><span class="tf-lbl">Status</span><select class="g-select"><option>In Progress</option></select></div><div class="tf-item"><span class="tf-lbl">Hours</span><input type="number" value="2" class="g-select" style="width:60px;"></div></div></div></div>`;
+            }
+        }
+
+        function addTaskRow() {
+            document.getElementById('task-container').insertAdjacentHTML('beforeend', `<div class="ticket-card fade-in"><div class="status-stripe"></div><div class="t-body"><div class="g-row"><div class="g-meta"><i class="fa-regular fa-folder"></i> Project</div></div><input class="hero-input" placeholder="New task description..."><div class="t-footer"><div class="tf-item"><span class="tf-lbl">Status</span><select class="g-select"><option>Todo</option><option>In Progress</option></select></div></div></div></div>`);
+        }
+
+        // --- REPORTS ---
+        function genReport() {
+            const t = document.getElementById('rep-table');
+            const b = document.getElementById('rep-body');
+            t.classList.remove('hidden');
+            b.innerHTML = `
+            <tr><td>Oct 24</td><td>Alex Johnson</td><td>Login Fix</td><td><span class="tag tag-done">Done</span></td><td>Deployed</td></tr>
+            <tr><td>Oct 24</td><td>Alex Johnson</td><td>API Header</td><td><span class="tag tag-prog">In Progress</span></td><td>Waiting on Token</td></tr>
+            <tr><td>Oct 23</td><td>Sarah Williams</td><td>QA Testing</td><td><span class="tag tag-blocked">Blocked</span></td><td>Env down</td></tr>`;
+        }
+
+        // Init
+        document.getElementById('dash-date').innerText = formatDate(today);
+        renderTasks();
     </script>
 </body>
 </html>
