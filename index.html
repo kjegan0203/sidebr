@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BSB Manager - Complete</title>
+<title>BSB Manager - Mobile Final</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -19,7 +19,7 @@
         --text-main: #0f172a;
         --text-muted: #64748b;
         --border: #e2e8f0;
-        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -49,11 +49,10 @@
     .tag-prog { background: #e0f2fe; color: #0369a1; }
 
     /* =========================================
-       SIDEBAR
+       SIDEBAR (Desktop)
        ========================================= */
     .sidebar { width: 260px; background: white; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem; z-index: 50; flex-shrink: 0; }
-    .brand { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: 800; margin-bottom: 2rem; }
-    .brand i { color: var(--primary); }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: 800; margin-bottom: 2rem; color: var(--primary); }
     
     .nav-menu { flex: 1; overflow-y: auto; }
     .nav-label { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: #94a3b8; margin: 1.5rem 0 0.5rem 10px; }
@@ -61,6 +60,20 @@
     .nav-item:hover { background: var(--bg-body); color: var(--text-main); }
     .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
     .nav-item i { width: 20px; text-align: center; }
+
+    /* =========================================
+       MOBILE TOP HEADER (New!)
+       ========================================= */
+    .mobile-header {
+        display: none; /* Hidden on Desktop */
+        position: fixed; top: 0; left: 0; right: 0;
+        height: 60px; background: white; border-bottom: 1px solid var(--border);
+        z-index: 100; align-items: center; justify-content: space-between;
+        padding: 0 1.5rem;
+    }
+    .mob-brand { font-weight: 800; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+    .mob-brand i { color: var(--primary); }
+    .mob-user { width: 32px; height: 32px; background: var(--primary-soft); color: var(--primary); border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
 
     /* =========================================
        MAIN CONTENT
@@ -77,14 +90,14 @@
 
     /* Cards */
     .card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow); }
-    
-    /* Dashboard 4-Grid */
     .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
     .stat-lbl { font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; }
     .stat-val { font-size: 2rem; font-weight: 800; color: #0f172a; margin: 5px 0; }
     .stat-sub { font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 5px; }
 
-    /* Dashboard Activity List */
+    /* =========================================
+       DASHBOARD ACTIVITY
+       ========================================= */
     .prog-task-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
     .prog-task-row:last-child { border: none; }
     .pt-info { display: flex; flex-direction: column; gap: 4px; }
@@ -95,14 +108,46 @@
     .pt-status { font-size: 0.75rem; color: #0369a1; background: #e0f2fe; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
 
     /* =========================================
-       SCRUM SPECIFIC
+       TASKS PAGE (7-Day Lock Logic)
+       ========================================= */
+    .date-nav { 
+        display: flex; align-items: center; justify-content: center; gap: 1.5rem; 
+        background: white; border: 1px solid var(--border); width: fit-content; 
+        padding: 8px 20px; border-radius: 50px; margin: 0 auto 2rem;
+    }
+    .dn-btn { background: none; border: none; font-size: 1.2rem; color: #64748b; cursor: pointer; }
+    .dn-val { font-weight: 700; color: #0f172a; min-width: 160px; text-align: center; }
+
+    .ticket-card { 
+        background: white; border: 1px solid var(--border); border-radius: 12px; 
+        padding: 1.2rem; margin-bottom: 1rem; position: relative; overflow: hidden; 
+        transition: opacity 0.3s;
+    }
+    .ticket-card.locked { background: #f8fafc; border-style: dashed; }
+    .ticket-card.locked input, .ticket-card.locked select { pointer-events: none; color: #94a3b8; }
+    
+    .status-stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #cbd5e1; }
+    .status-stripe.done { background: #16a34a; }
+    .status-stripe.prog { background: #3b82f6; }
+
+    .g-row { display: flex; gap: 1rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+    .g-meta { display: flex; gap: 0.5rem; color: var(--text-muted); font-size: 0.85rem; align-items: center; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; }
+    .g-input-sm { border: none; background: transparent; color: var(--text-main); font-weight: 600; font-size: 0.85rem; width: 100px; }
+    
+    .hero-input { width: 100%; border: none; font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin-bottom: 1rem; background: transparent; }
+    .t-footer { display: flex; align-items: center; gap: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; flex-wrap: wrap; }
+    .tf-item { display: flex; flex-direction: column; }
+    .tf-lbl { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
+    .g-select { background: #f8fafc; border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; color: var(--text-main); }
+
+    /* =========================================
+       SCRUM PAGE
        ========================================= */
     .team-strip { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 10px; margin-bottom: 1.5rem; }
     .tm-card { 
         min-width: 140px; background: white; border: 1px solid var(--border); 
         border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; position: relative;
     }
-    .tm-card:hover { transform: translateY(-3px); }
     .tm-card.selected { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 0 0 2px var(--primary-soft); }
     .tm-av { width: 48px; height: 48px; background: #cbd5e1; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center; font-weight: 700; color: white; }
 
@@ -111,8 +156,7 @@
     .sc-btn { background: none; border: none; cursor: pointer; color: #64748b; }
     .sc-date { font-weight: 700; font-size: 0.9rem; color: #0f172a; width: 100px; text-align: center; }
 
-    .task-entry-list { display: flex; flex-direction: column; gap: 10px; }
-    .sc-task-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border: 1px solid #f1f5f9; border-radius: 8px; background: #fff; }
+    .sc-task-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border: 1px solid #f1f5f9; border-radius: 8px; background: #fff; margin-bottom: 10px; }
     .sc-dot { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; margin-top: 6px; }
     .sc-dot.done { background: #16a34a; }
     .sc-desc { font-size: 0.9rem; color: #334155; line-height: 1.4; flex: 1; }
@@ -124,56 +168,53 @@
     .ar-btn { background: var(--text-main); color: white; border: none; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; display: grid; place-items: center; }
 
     /* =========================================
-       WEEKLY TABLE
+       OTHER PAGES
        ========================================= */
+    /* Weekly */
     .weekly-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
     .weekly-table th { background: #f8fafc; padding: 12px; font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 700; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
     .weekly-table td { border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); padding: 0; }
     .weekly-table input { width: 100%; height: 44px; border: none; text-align: center; font-size: 0.9rem; color: var(--text-main); }
-    .weekly-table .task-in { text-align: left; padding-left: 10px; font-weight: 500; }
-    .weekly-table .total-cell { background: #f8fafc; font-weight: 700; text-align: center; line-height: 44px; }
-
-    /* =========================================
-       PROJECTS GRID
-       ========================================= */
+    
+    /* Projects */
     .proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
     .proj-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; transition: transform 0.2s; cursor: pointer; }
-    .proj-card:hover { transform: translateY(-4px); border-color: var(--primary); }
     .pc-head { display: flex; justify-content: space-between; align-items: center; }
     .pc-icon { width: 44px; height: 44px; background: var(--bg-body); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; color: #64748b; }
     .pc-title { font-size: 1.1rem; font-weight: 700; }
-    .pc-desc { font-size: 0.9rem; color: #64748b; line-height: 1.4; }
     .progress-track { height: 6px; background: #f1f5f9; border-radius: 10px; overflow: hidden; margin-top: 10px; }
     .progress-fill { height: 100%; background: var(--primary); }
     .av-stack { display: flex; }
     .av-stack .av { width: 28px; height: 28px; border-radius: 50%; border: 2px solid white; margin-left: -8px; display: grid; place-items: center; font-size: 0.7rem; font-weight: 700; color: white; }
-    .av-stack .av:first-child { margin-left: 0; }
 
     /* =========================================
-       REPORTS
-       ========================================= */
-    .filter-bar { background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; align-items: end; }
-    .f-group { display: flex; flex-direction: column; gap: 5px; }
-    .rep-input { border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; min-width: 150px; }
-    .rep-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-    .rep-table th { background: #f8fafc; padding: 12px; text-align: left; font-size: 0.8rem; font-weight: 700; color: #64748b; border-bottom: 1px solid var(--border); }
-    .rep-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
-
-    /* =========================================
-       MOBILE NAV
+       MOBILE BOTTOM NAV
        ========================================= */
     .bottom-nav {
         display: none; position: fixed; bottom: 0; left: 0; right: 0; background: white;
-        height: 65px; border-top: 1px solid var(--border); z-index: 9999;
+        height: 70px; border-top: 1px solid var(--border); z-index: 9999;
         justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.02);
     }
-    .bn-item { font-size: 1.4rem; color: #94a3b8; cursor: pointer; }
+    .bn-item { font-size: 1.4rem; color: #94a3b8; cursor: pointer; transition: all 0.2s; }
     .bn-item.active { color: var(--primary); }
+    
+    /* FAB (Add Button) */
+    .b-fab-container {
+        position: relative; top: -20px; width: 60px; height: 60px;
+        background: var(--text-main); border-radius: 50%;
+        display: grid; place-items: center; color: white; font-size: 1.5rem;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.4); cursor: pointer; z-index: 10000;
+        transition: transform 0.1s;
+    }
+    .b-fab-container:active { transform: scale(0.95); }
 
+    /* RESPONSIVE */
     @media (max-width: 900px) {
         .sidebar { display: none; }
+        .mobile-header { display: flex; }
         .bottom-nav { display: flex; }
-        .main-content { padding: 1rem; padding-bottom: 100px; }
+        .main-content { padding: 1rem; padding-top: 80px; padding-bottom: 100px; }
         .weekly-table { min-width: 600px; }
         .add-row { flex-wrap: wrap; }
         .ar-btn { width: 100%; margin-top: 5px; }
@@ -182,11 +223,17 @@
 </head>
 <body>
 
+    <header class="mobile-header">
+        <div class="mob-brand"><i class="fa-solid fa-cube"></i> BSB Manager</div>
+        <div class="mob-user" onclick="nav('profile')">AJ</div>
+    </header>
+
     <aside class="sidebar">
         <div class="brand"><i class="fa-solid fa-cube"></i> BSB Manager</div>
         <nav class="nav-menu">
             <div class="nav-item active" onclick="nav('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Overview</div>
             <div class="nav-item" onclick="nav('scrum', this)"><i class="fa-solid fa-users-viewfinder"></i> Daily Scrum</div>
+            <div class="nav-item" onclick="nav('tasks', this)"><i class="fa-solid fa-list-check"></i> My Tasks</div>
             <div class="nav-item" onclick="nav('weekly', this)"><i class="fa-solid fa-calendar-week"></i> Weekly Plan</div>
             <div class="nav-label">Management</div>
             <div class="nav-item" onclick="nav('projects', this)"><i class="fa-solid fa-folder"></i> Projects</div>
@@ -199,18 +246,18 @@
         <div id="dashboard" class="page active">
             <div class="page-header">
                 <div class="page-title"><h1>Dashboard</h1><p>Welcome back, Alex.</p></div>
-                <div class="tag" style="background:#f1f5f9; color:#64748b;">Mon, Oct 24</div>
+                <div class="tag" style="background:#f1f5f9; color:#64748b;" id="dash-date">Today</div>
             </div>
 
             <div class="grid-4">
                 <div class="card">
-                    <div class="stat-lbl">Active Tasks</div>
-                    <div class="stat-val">8</div>
-                    <div class="stat-sub"><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> 3 Due Today</div>
+                    <div class="stat-lbl">Tasks Today</div>
+                    <div class="stat-val">3</div>
+                    <div class="stat-sub"><i class="fa-solid fa-bolt" style="color:#f59e0b"></i> Active</div>
                 </div>
                 <div class="card">
                     <div class="stat-lbl">Blockers</div>
-                    <div class="stat-val" style="color:#ef4444">2</div>
+                    <div class="stat-val" style="color:#ef4444">1</div>
                     <div class="stat-sub">Needs Attention</div>
                 </div>
                 <div class="card">
@@ -226,46 +273,37 @@
             </div>
 
             <div class="card">
-                <h3 style="margin-bottom:1.5rem;">My In-Progress Tasks</h3>
-                
+                <h3 style="margin-bottom:1.5rem;">My Active Tasks</h3>
                 <div class="prog-task-row">
-                    <div class="pt-info">
-                        <div class="pt-title">Refactor Sidebar Navigation</div>
-                        <div class="pt-proj"><i class="fa-regular fa-folder"></i> BSB Manager</div>
-                    </div>
-                    <div class="pt-meta">
-                        <div class="pt-time">4h Logged</div>
-                        <div class="pt-status">In Progress</div>
-                    </div>
+                    <div class="pt-info"><div class="pt-title">Refactor Sidebar Navigation</div><div class="pt-proj"><i class="fa-regular fa-folder"></i> BSB Manager</div></div>
+                    <div class="pt-meta"><div class="pt-time">4h Logged</div><div class="pt-status">In Progress</div></div>
                 </div>
-
                 <div class="prog-task-row">
-                    <div class="pt-info">
-                        <div class="pt-title">Database Schema Migration</div>
-                        <div class="pt-proj"><i class="fa-regular fa-folder"></i> Finance API</div>
-                    </div>
-                    <div class="pt-meta">
-                        <div class="pt-time">2.5h Logged</div>
-                        <div class="pt-status">In Progress</div>
-                    </div>
-                </div>
-
-                <div class="prog-task-row">
-                    <div class="pt-info">
-                        <div class="pt-title">Fix Mobile Z-Index Issue</div>
-                        <div class="pt-proj"><i class="fa-regular fa-folder"></i> BSB Manager</div>
-                    </div>
-                    <div class="pt-meta">
-                        <div class="pt-time">0.5h Logged</div>
-                        <div class="pt-status" style="color:#b91c1c; background:#fecaca">Blocked</div>
-                    </div>
+                    <div class="pt-info"><div class="pt-title">Database Schema Migration</div><div class="pt-proj"><i class="fa-regular fa-folder"></i> Finance API</div></div>
+                    <div class="pt-meta"><div class="pt-time">2.5h Logged</div><div class="pt-status">In Progress</div></div>
                 </div>
             </div>
         </div>
 
-        <div id="scrum" class="page">
-            <div class="page-header"><div class="page-title"><h1>Daily Scrum</h1><p>Select a member to view or add tasks.</p></div></div>
+        <div id="tasks" class="page">
+            <div class="page-header"><div class="page-title"><h1>My Tasks</h1><p>Log your daily work.</p></div></div>
             
+            <div class="date-nav">
+                <button class="dn-btn" onclick="changeTaskDate(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                <span class="dn-val" id="task-date-display">Today</span>
+                <button class="dn-btn" onclick="changeTaskDate(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <div id="task-container">
+                </div>
+
+            <button id="add-task-btn" class="btn-primary" style="width:100%; justify-content:center; margin-top:1rem;" onclick="addTaskRow()">
+                <i class="fa-solid fa-plus"></i> Add New Task
+            </button>
+        </div>
+
+        <div id="scrum" class="page">
+            <div class="page-header"><div class="page-title"><h1>Daily Scrum</h1><p>Select team member to view status.</p></div></div>
             <div class="team-strip">
                 <div class="tm-card selected" onclick="selMember(0, this)"><div class="tm-av" style="background:#4f46e5">AJ</div>Alex</div>
                 <div class="tm-card" onclick="selMember(1, this)"><div class="tm-av" style="background:#ec4899">SW</div>Sarah</div>
@@ -273,7 +311,6 @@
                 <div class="tm-card" onclick="selMember(3, this)"><div class="tm-av" style="background:#8b5cf6">JL</div>Jen</div>
                 <div class="tm-card" onclick="selMember(4, this)"><div class="tm-av" style="background:#64748b">DP</div>David</div>
             </div>
-
             <div class="card" id="scrum-detail-card">
                 <div class="scrum-controls">
                     <h3 id="scrum-user-name">Alex's Tasks</h3>
@@ -283,10 +320,9 @@
                         <button class="sc-btn" onclick="toggleScrumDate(1)"><i class="fa-solid fa-chevron-right"></i></button>
                     </div>
                 </div>
-                <div class="task-entry-list" id="scrum-list">
-                    </div>
+                <div class="task-entry-list" id="scrum-list"></div>
                 <div id="scrum-add-area" class="add-row">
-                    <input type="text" class="ar-input" id="new-task-desc" placeholder="Add new task for today...">
+                    <input type="text" class="ar-input" id="new-task-desc" placeholder="Add new task...">
                     <input type="number" class="ar-hrs" placeholder="Hrs">
                     <button class="ar-btn" onclick="addNewScrumTask()"><i class="fa-solid fa-plus"></i></button>
                 </div>
@@ -294,73 +330,42 @@
         </div>
 
         <div id="weekly" class="page">
-            <div class="page-header">
-                <div class="page-title"><h1>Weekly Plan</h1><p>Week 43 (Oct 24 - Oct 30)</p></div>
-                <button class="btn-primary"><i class="fa-solid fa-save"></i> Save Sheet</button>
-            </div>
-            
+            <div class="page-header"><div class="page-title"><h1>Weekly Plan</h1><p>Week 43</p></div></div>
             <div style="overflow-x:auto;">
                 <table class="weekly-table">
-                    <thead>
-                        <tr><th style="min-width:220px;">Task Description</th><th width="80">Mon</th><th width="80">Tue</th><th width="80">Wed</th><th width="80">Thu</th><th width="80">Fri</th><th width="80">Total</th></tr>
-                    </thead>
+                    <thead><tr><th style="min-width:200px;">Task</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
                     <tbody>
-                        <tr><td><input class="task-in" value="BSB-101 Auth Dev"></td><td><input type="number" value="4"></td><td><input type="number" value="4"></td><td><input type="number" value="4"></td><td><input type="number"></td><td><input type="number"></td><td class="total-cell">12</td></tr>
-                        <tr><td><input class="task-in" value="BSB-105 Dashboard UI"></td><td><input type="number" value="4"></td><td><input type="number" value="4"></td><td><input type="number" value=""></td><td><input type="number"></td><td><input type="number"></td><td class="total-cell">8</td></tr>
-                        <tr><td><input class="task-in" value="Internal Meetings"></td><td><input type="number" value="1"></td><td><input type="number" value="1"></td><td><input type="number" value="1"></td><td><input type="number"></td><td><input type="number"></td><td class="total-cell">3</td></tr>
-                        <tr><td><input class="task-in" value="Code Review"></td><td><input type="number"></td><td><input type="number" value="1"></td><td><input type="number" value="2"></td><td><input type="number"></td><td><input type="number"></td><td class="total-cell">3</td></tr>
-                        <tr><td><input class="task-in" placeholder="+ Add Task..."></td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td><td class="total-cell">0</td></tr>
+                        <tr><td><input value="BSB-101 Auth"></td><td><input value="4"></td><td><input value="4"></td><td><input></td><td><input></td><td><input></td></tr>
+                        <tr><td><input value="Meetings"></td><td><input value="1"></td><td><input value="1"></td><td><input></td><td><input></td><td><input></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        
+
         <div id="projects" class="page">
-            <div class="page-header"><div class="page-title"><h1>Projects</h1><p>Active development roadmap.</p></div><button class="btn-primary"><i class="fa-solid fa-plus"></i> New</button></div>
+            <div class="page-header"><div class="page-title"><h1>Projects</h1></div></div>
             <div class="proj-grid">
                 <div class="proj-card">
                     <div class="pc-head"><div class="pc-icon"><i class="fa-solid fa-cube"></i></div><div class="tag tag-active">Active</div></div>
-                    <div><div class="pc-title">BSB Manager</div><div class="pc-desc">Internal scrum tool & HR dashboard.</div></div>
-                    <div class="av-stack"><div class="av" style="background:#3b82f6;">AJ</div><div class="av" style="background:#ec4899;">SW</div></div>
-                    <div><div class="pc-meta"><span>Progress</span><span>65%</span></div><div class="progress-track"><div class="progress-fill" style="width:65%"></div></div></div>
+                    <div><div class="pc-title">BSB Manager</div></div>
+                    <div class="av-stack"><div class="av" style="background:#3b82f6;">AJ</div></div>
+                    <div><div class="progress-track"><div class="progress-fill" style="width:65%"></div></div></div>
                 </div>
                 <div class="proj-card">
-                    <div class="pc-head"><div class="pc-icon"><i class="fa-solid fa-wallet"></i></div><div class="tag tag-plan">Planning</div></div>
-                    <div><div class="pc-title">Finance API</div><div class="pc-desc">Migrating legacy SOAP services to REST.</div></div>
+                    <div class="pc-head"><div class="pc-icon"><i class="fa-solid fa-wallet"></i></div><div class="tag tag-plan">Plan</div></div>
+                    <div><div class="pc-title">Finance API</div></div>
                     <div class="av-stack"><div class="av" style="background:#10b981;">CW</div></div>
-                    <div><div class="pc-meta"><span>Progress</span><span>10%</span></div><div class="progress-track"><div class="progress-fill" style="width:10%"></div></div></div>
-                </div>
-                <div class="proj-card">
-                    <div class="pc-head"><div class="pc-icon"><i class="fa-solid fa-users"></i></div><div class="tag tag-active">Active</div></div>
-                    <div><div class="pc-title">HR Portal</div><div class="pc-desc">Employee onboarding and leave system.</div></div>
-                    <div class="av-stack"><div class="av" style="background:#8b5cf6;">JL</div><div class="av" style="background:#f43f5e;">AW</div></div>
-                    <div><div class="pc-meta"><span>Progress</span><span>85%</span></div><div class="progress-track"><div class="progress-fill" style="width:85%"></div></div></div>
-                </div>
-                <div class="proj-card">
-                    <div class="pc-head"><div class="pc-icon"><i class="fa-solid fa-mobile-screen"></i></div><div class="tag tag-blocked">Blocked</div></div>
-                    <div><div class="pc-title">Mobile App</div><div class="pc-desc">React Native refactor for iOS/Android.</div></div>
-                    <div class="av-stack"><div class="av" style="background:#ec4899;">EC</div></div>
-                    <div><div class="pc-meta"><span>Progress</span><span>30%</span></div><div class="progress-track"><div class="progress-fill" style="width:30%; background:#ef4444;"></div></div></div>
+                    <div><div class="progress-track"><div class="progress-fill" style="width:10%"></div></div></div>
                 </div>
             </div>
         </div>
 
-        <div id="reports" class="page">
-            <div class="page-header"><div class="page-title"><h1>Reports</h1><p>Generate task logs and performance data.</p></div></div>
-            
-            <div class="filter-bar">
-                <div class="f-group"><label class="stat-lbl">User</label><select class="rep-input"><option>All Users</option><option>Alex Johnson</option><option>Sarah Williams</option></select></div>
-                <div class="f-group"><label class="stat-lbl">Project</label><select class="rep-input"><option>All</option><option>BSB Manager</option><option>Finance API</option></select></div>
-                <div class="f-group"><label class="stat-lbl">Date Range</label><input type="date" class="rep-input"></div>
-                <button class="btn-primary" onclick="genReport()">Generate</button>
-            </div>
-
-            <div style="overflow-x:auto;">
-                <table class="rep-table hidden" id="rep-table">
-                    <thead><tr><th>Date</th><th>User</th><th>Task</th><th>Status</th><th>Hrs</th><th>Remarks</th></tr></thead>
-                    <tbody id="rep-body">
-                        </tbody>
-                </table>
+        <div id="profile" class="page">
+            <div class="page-header"><div class="page-title"><h1>Profile</h1></div></div>
+            <div class="card">
+                <h3>Alex Johnson</h3>
+                <p style="color:#64748b; margin-bottom:1rem;">alex@company.com</p>
+                <button class="btn-primary" style="background:#ef4444; width:100%;">Sign Out</button>
             </div>
         </div>
 
@@ -369,9 +374,9 @@
     <nav class="bottom-nav">
         <div class="bn-item active" onclick="nav('dashboard', this)"><i class="fa-solid fa-chart-pie"></i></div>
         <div class="bn-item" onclick="nav('scrum', this)"><i class="fa-solid fa-users-viewfinder"></i></div>
+        <div class="b-fab-container" onclick="nav('tasks', null)"><i class="fa-solid fa-plus"></i></div>
         <div class="bn-item" onclick="nav('weekly', this)"><i class="fa-solid fa-calendar-week"></i></div>
         <div class="bn-item" onclick="nav('projects', this)"><i class="fa-solid fa-folder"></i></div>
-        <div class="bn-item" onclick="nav('reports', this)"><i class="fa-solid fa-file-invoice"></i></div>
     </nav>
 
     <script>
@@ -379,83 +384,82 @@
         function nav(pageId, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            if(el) {
-                document.querySelectorAll('.nav-item, .bn-item').forEach(n => n.classList.remove('active'));
-                if(el.classList.contains('nav-item') || el.classList.contains('bn-item')) el.classList.add('active');
+            
+            // Update Mobile Bottom Nav (Highlight logic)
+            document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+            if(el && el.classList.contains('bn-item')) el.classList.add('active');
+        }
+
+        // --- Tasks Logic ---
+        let viewDate = new Date();
+        const today = new Date();
+        function changeTaskDate(d) {
+            viewDate.setDate(viewDate.getDate() + d);
+            renderTasks();
+        }
+        function renderTasks() {
+            const isToday = viewDate.toDateString() === today.toDateString();
+            document.getElementById('task-date-display').innerText = isToday ? "Today" : viewDate.toLocaleDateString();
+            
+            // 7 Day Lock Check
+            const diff = Math.ceil(Math.abs(today - viewDate) / (1000 * 60 * 60 * 24));
+            const isLocked = (today > viewDate) && (diff > 7);
+            
+            document.getElementById('add-task-btn').style.display = isLocked ? 'none' : 'flex';
+            
+            // Mock content
+            const container = document.getElementById('task-container');
+            if(isLocked) {
+                container.innerHTML = `<div class="ticket-card locked"><div style="padding:1.5rem; text-align:center; color:#94a3b8;"><i class="fa-solid fa-lock"></i> Locked (Older than 7 days)</div></div>`;
+            } else {
+                container.innerHTML = `<div class="ticket-card"><div class="status-stripe done"></div><div class="t-body"><div class="g-row"><div class="g-meta">BSB-101</div></div><input class="hero-input" value="Refactor Nav"><div class="t-footer"><div class="tf-item"><span class="tf-lbl">Status</span><select class="g-select"><option>Done</option></select></div><div class="tf-item"><span class="tf-lbl">Hrs</span><input value="4" class="g-select" style="width:50px"></div></div></div></div>`;
             }
+        }
+
+        function addTaskRow() {
+            document.getElementById('task-container').insertAdjacentHTML('beforeend', `<div class="ticket-card fade-in"><div class="status-stripe"></div><div class="t-body"><div class="g-row"><div class="g-meta">Project</div></div><input class="hero-input" placeholder="New Task..."><div class="t-footer"><div class="tf-item"><span class="tf-lbl">Status</span><select class="g-select"><option>In Progress</option></select></div></div></div></div>`);
         }
 
         // --- Scrum Logic ---
-        let scrumDateOffset = 0; // 0 = Today, -1 = Yesterday
-        const scrumData = [
-            { id: 1, desc: 'Refactor Sidebar Navigation', hrs: '4h', done: true },
-            { id: 2, desc: 'Database Schema Migration', hrs: '2.5h', done: false }
-        ];
-
-        function selMember(idx, el) {
+        let scrumOffset = 0;
+        function selMember(i, el) {
             document.querySelectorAll('.tm-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             const names = ['Alex', 'Sarah', 'Mike', 'Jen', 'David'];
-            document.getElementById('scrum-user-name').innerText = names[idx] + "'s Tasks";
-            renderScrumList();
+            document.getElementById('scrum-user-name').innerText = names[i] + "'s Tasks";
+            renderScrum();
         }
-
-        function toggleScrumDate(dir) {
-            scrumDateOffset += dir;
-            if(scrumDateOffset > 0) scrumDateOffset = 0;
-            renderScrumList();
+        function toggleScrumDate(d) {
+            scrumOffset += d;
+            if(scrumOffset > 0) scrumOffset = 0;
+            renderScrum();
         }
-
-        function renderScrumList() {
-            const display = document.getElementById('scrum-date-display');
-            const addArea = document.getElementById('scrum-add-area');
+        function renderScrum() {
+            const disp = document.getElementById('scrum-date-display');
+            const add = document.getElementById('scrum-add-area');
             const list = document.getElementById('scrum-list');
-
-            if(scrumDateOffset === 0) {
-                display.innerText = "Today";
-                addArea.classList.remove('hidden');
+            
+            if(scrumOffset === 0) {
+                disp.innerText = "Today";
+                add.classList.remove('hidden');
+                list.innerHTML = `<div class="sc-task-item"><div class="sc-dot"></div><div class="sc-desc">Refactoring Sidebar</div><div class="sc-hrs">4h</div></div>`;
             } else {
-                display.innerText = "Yesterday";
-                addArea.classList.add('hidden');
+                disp.innerText = "Yesterday";
+                add.classList.add('hidden');
+                list.innerHTML = `<div class="sc-task-item"><div class="sc-dot done"></div><div class="sc-desc">Completed Login API</div><div class="sc-hrs">5h</div></div>`;
             }
-
-            let html = '';
-            if(scrumDateOffset === -1) {
-                // Mock Yesterday Data
-                html = `<div class="sc-task-item"><div class="sc-dot done"></div><div class="sc-desc">Completed Login API</div><div class="sc-hrs">5h</div></div>
-                        <div class="sc-task-item"><div class="sc-dot done"></div><div class="sc-desc">Fixed CSS Grid bug</div><div class="sc-hrs">2h</div></div>`;
-            } else {
-                scrumData.forEach(t => {
-                    html += `<div class="sc-task-item"><div class="sc-dot ${t.done ? 'done' : ''}"></div><div class="sc-desc">${t.desc}</div><div class="sc-hrs">${t.hrs}</div></div>`;
-                });
-            }
-            list.innerHTML = html;
         }
-
         function addNewScrumTask() {
-            const input = document.getElementById('new-task-desc');
-            if(input.value) {
-                scrumData.push({ id: Date.now(), desc: input.value, hrs: '0h', done: false });
-                input.value = '';
-                renderScrumList();
+            const val = document.getElementById('new-task-desc').value;
+            if(val) {
+                document.getElementById('scrum-list').insertAdjacentHTML('beforeend', `<div class="sc-task-item"><div class="sc-dot"></div><div class="sc-desc">${val}</div><div class="sc-hrs">0h</div></div>`);
+                document.getElementById('new-task-desc').value = '';
             }
-        }
-
-        // --- Reports Logic ---
-        function genReport() {
-            const t = document.getElementById('rep-table');
-            const b = document.getElementById('rep-body');
-            t.classList.remove('hidden');
-            b.innerHTML = `
-            <tr><td>Oct 24</td><td>Alex Johnson</td><td>Login Fix</td><td><span class="tag tag-done">Done</span></td><td>4</td><td>Deployed</td></tr>
-            <tr><td>Oct 24</td><td>Alex Johnson</td><td>API Header</td><td><span class="tag tag-prog">In Progress</span></td><td>2.5</td><td>Waiting on Token</td></tr>
-            <tr><td>Oct 23</td><td>Sarah Williams</td><td>QA Testing</td><td><span class="tag tag-blocked">Blocked</span></td><td>0.5</td><td>Env down</td></tr>
-            <tr><td>Oct 23</td><td>Mike Brown</td><td>DB Sync</td><td><span class="tag tag-done">Done</span></td><td>8</td><td>Complete</td></tr>
-            `;
         }
 
         // Init
-        renderScrumList();
+        renderTasks();
+        renderScrum();
     </script>
 </body>
 </html>
